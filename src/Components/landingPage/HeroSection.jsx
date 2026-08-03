@@ -35,7 +35,7 @@ export default function HeroSection() {
           <ArrowRight size={18} className="transform group-hover:translate-x-1 transition-transform" />
         </a>
 
-        <a
+        <a 
           href="#discover"
           className="w-full sm:w-auto flex items-center justify-center space-x-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800/80 dark:hover:bg-gray-800 text-gray-800 dark:text-gray-200 font-semibold px-6 py-3.5 rounded-xl border border-gray-200 dark:border-gray-700/60 transition"
         >
