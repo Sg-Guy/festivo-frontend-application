@@ -1,6 +1,5 @@
 commandes PWA : 
     npm i -D vite-plugin-pwa // installation
 
-    npm run build (Apres configuration de vite.config.js)
+    npm run dev (Apres configuration de vite.config.js)
 
-    npm run preview
