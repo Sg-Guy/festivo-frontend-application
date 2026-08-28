@@ -1,15 +1,17 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom"; // <-- Importe Link
+import { Link } from "react-router-dom";
 import { useTheme } from "../../context/ThemeContext";
-import { Sun, Moon, Menu, X, Zap } from "lucide-react";
+import { Sun, Moon, Menu, X, Zap, User } from "lucide-react";
 import Button from "../ui/Button";
 import { useLogout } from "../../hooks/useAuth";
+import UserDropdown from "../ui/UserDropDown";
+import { ROUTES } from "../../constants/routes";
 
 export default function NavBar() {
   const { theme, toggleTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const {mutate: logout , isPending} = useLogout();
+  const { mutate: logout, isPending } = useLogout();
 
   const isAuthenticated = localStorage.getItem("token") ? true : false;
 
@@ -53,7 +55,7 @@ export default function NavBar() {
           <div className="flex items-center space-x-3 sm:space-x-4">
             {/* Lien vers la page de Connexion */}
             <Link
-              to="/auth/login"
+              to={ROUTES.LOGIN}
               className="hidden sm:inline text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-[var(--primary)] transition"
             >
               Connexion
@@ -61,18 +63,15 @@ export default function NavBar() {
 
             {/* Lien vers la page d'Inscription */}
             <Link
-              to="/auth/register"
+              to={ROUTES.REGISTER}
               className="bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white text-xs sm:text-sm font-semibold px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl transition shadow-lg shadow-orange-600/20 whitespace-nowrap"
             >
               Commencer
             </Link>
           </div>
         ) : (
-          <div className="flex items-center space-x-3">
-            <button className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gray-100 dark:bg-[var(--dark-surface)] text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-[var(--dark-surface-soft)] transition">
-              Profil
-            </button>
-          </div>
+          /* UserDropdown visible partout, y compris sur mobile */
+          <UserDropdown />
         )}
 
         <button
@@ -84,7 +83,7 @@ export default function NavBar() {
         </button>
       </div>
 
-      {/* Menu mobile */}
+      {/* Menu mobile (pour les liens de navigation du site) */}
       <div
         className={`absolute top-full left-0 w-full bg-white dark:bg-[var(--dark-background)] border-b border-gray-200 dark:border-[var(--dark-border)] shadow-2xl py-6 px-6 flex flex-col space-y-4 md:hidden transition-all duration-300 ease-in-out transform origin-top ${mobileMenuOpen ? "opacity-100 scale-y-100 translate-y-0 pointer-events-auto" : "opacity-0 scale-y-95 -translate-y-2 pointer-events-none"}`}
       >
@@ -110,33 +109,23 @@ export default function NavBar() {
           Événements
         </a>
 
-        {!isAuthenticated ? (
+        {!isAuthenticated && (
           <div className="pt-3 border-t border-gray-200 dark:border-[var(--dark-border)] flex flex-col space-y-3">
             <Link
-              to="/auth/login"
+              to={ROUTES.LOGIN}
               onClick={() => setMobileMenuOpen(false)}
               className="text-center py-2 text-gray-700 dark:text-gray-300 font-medium hover:text-[var(--primary)] transition"
             >
               Connexion
             </Link>
             <Link
-              to="/auth/register"
+              to={ROUTES.REGISTER}
               onClick={() => setMobileMenuOpen(false)}
               className="text-center bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white font-semibold py-2.5 rounded-xl transition"
             >
               Commencer
             </Link>
           </div>
-        ) : (
-          <Button
-          type="button"
-          variant="danger"
-          isLoading= {isPending}
-          loadingText="Déconnexion..."
-          onClick={()=>logout()}
-          >
-            Déconnexion
-          </Button>
         )}
       </div>
     </header>

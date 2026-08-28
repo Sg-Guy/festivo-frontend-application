@@ -117,7 +117,7 @@ export default function Register() {
                 error={errors[field.name]?.message}
               />
             ))}
-            <p className="text-xs sm:text-lg text-gray-500 dark:text-gray-400 leading-relaxed">
+            <p className="text-xs sm:text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
               En vous inscrivant, vous acceptez nos
               <a
                 href="#"

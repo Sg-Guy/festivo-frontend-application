@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "../api/axios";
@@ -15,7 +15,12 @@ export function useLogin() {
         },
         onSuccess: (data) => {
             toast.success("Connexion réussie ! Bienvenue.");
-            if (data.token) localStorage.setItem("token", data.token);
+            if (data && data.token) {
+                localStorage.setItem("token", data.token);
+                localStorage.setItem("user", JSON.stringify(data.data));
+                window.dispatchEvent(new Event("auth-storage"));
+            };
+            
             navigateTo(ROUTES.EVENTS);
         },
         onError: (error) => {
@@ -39,7 +44,7 @@ export function useRegister() {
             });
             return data.data;
         },
-        onSuccess: () => {
+        onSuccess: (data) => {
             toast.success(data.message || "Compte créé avec succès ! Connectez-vous.");
             navigateTo(ROUTES.LOGIN);
         },
@@ -50,7 +55,7 @@ export function useRegister() {
     });
 }
 
-//Hook pour la réinitialisation de mot de passe
+// Récevoir un lien de modification de mot de passe
 export function useForgotPassword() {
     return useMutation({
         mutationFn: async (credentials) => {
@@ -72,6 +77,7 @@ export function useForgotPassword() {
     });
 }
 
+// restauration de mot de passe
 export function useResetPassword() {
     return useMutation({
         mutationFn: async (credentials) => {
@@ -99,17 +105,49 @@ export function useResetPassword() {
 export function useLogout() {
     return useMutation({
         mutationFn: async () => {
-            const data = await api.post("/logout");
+            const data = await api.delete("/logout");
             return data;
         },
         onSuccess: (data) => {
             localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            window.dispatchEvent(new Event("auth-change")); // Met à jour l'interface instantanément            t
             toast.success(data.message || "Déconnecté");
             navigateTo(ROUTES.HOME);
         },
         onError: (error) => {
-            localStorage.removeItem("token")
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            window.dispatchEvent(new Event("auth-change")); 
             navigateTo(ROUTES.HOME)
+        }
+    })
+}
+
+export function useProfile() {
+    return useQuery({
+        queryKey: ["me"],
+        queryFn: async () => {
+            const data = await api.get("/me");
+            return data.data;
+        },
+        select: (res) => res.data || []
+    })
+}
+
+export function useUpdate() {
+    return useMutation({
+        mutationFn: async (credentials) => {
+            const data = await api.put("/me", credentials);
+            return data;
+        },
+        onSuccess: (data) => {
+            toast.success(data.message || "Profil mis à jour avec ");
+        },
+        onError: (error) => {
+            const messsage = error?.response?.data?.message || "Erreur lors de de la mise jour du profil."
+
+            toast.error(messsage);
         }
     })
 }

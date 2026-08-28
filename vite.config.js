@@ -7,10 +7,10 @@ import { VitePWA } from 'vite-plugin-pwa'
 export default defineConfig({
   plugins: [
     react(),
-    VitePWA({
+    /*VitePWA({
       registerType: 'autoUpdate',
       devOptions: {
-        enabled: true // Permet de tester la PWA même en mode développement (npm run dev)
+        enabled: false // Permet de tester la PWA même en mode développement (npm run dev)
       },
       manifest: {
         name: 'Festivo - Plateforme de Billetterie',
@@ -32,6 +32,7 @@ export default defineConfig({
           }
         ]
       }
-    })
+    })*/
   ],
+  
 })

@@ -2,8 +2,9 @@ import axios from "axios";
 import { navigateTo } from "../utils/navigation";
 import { ROUTES } from "../constants/routes";
 
+const API_URL = import.meta.env.VITE_API_URL;
 const api = axios.create({
-    baseURL: "http://localhost:8000/api/v1",
+    baseURL: API_URL,
     withCredentials: true, // Indispensable pour Sanctum (cookies d'authentification)
     headers: {
         "Content-Type": "application/json",
@@ -11,12 +12,23 @@ const api = axios.create({
     },
 });
 
+api.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    }
+)
+
 // Intercepteur pour gérer les erreurs globales 
 api.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response && error.response.status === 401) {
-            // Si le token/la session expire, on redirige vers le login
+            // Si le token/la session expire , redirection
             navigateTo(ROUTES.LOGIN);
         }
         return Promise.reject(error);

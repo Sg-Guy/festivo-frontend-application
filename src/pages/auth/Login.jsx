@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -19,14 +19,16 @@ import { set } from "date-fns";
 import { useLogin, useForgotPassword } from "../../hooks/useAuth";
 import PasswordInput from "../../Components/ui/PasswordInput";
 import { ROUTES } from "../../constants/routes";
+import api from "../../api/axios";
+import { useAcceptInvitation } from "../../hooks/useMembers";
 
 export default function Login() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm();
-
   const [showPassword, setShowPassword] = useState(false);
 
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
@@ -39,11 +41,49 @@ export default function Login() {
 
   const { mutate: loginUser, isPending } = useLogin();
 
+  const { mutate: acceptInvitation } = useAcceptInvitation();
+
+  const [isEmailLocked, setIsEmailLocked] = useState(false); 
+
+  useEffect(() => {
+    
+    const pendingToken = localStorage.getItem("pending_invitation_token");
+
+    if (pendingToken) {
+      api
+        .get(`invitations/${pendingToken}`)
+        .then((response) => {
+          const invitedEmail = response.data.invitation.email;
+          // Injecte l'email dans React Hook Form et verrouille le champ
+          setValue("email", invitedEmail);
+          setIsEmailLocked(true);
+          
+        })
+        .catch(() => {
+          // token invalide ou expiré
+          localStorage.removeItem("pending_invitation_token");
+        });
+    }
+  }, [setValue]);
+
   const onSubmit = (data) => {
-    loginUser(data);
+    loginUser(data, {
+      onSuccess: () => {
+        
+        const pendingToken = localStorage.getItem("pending_invitation_token");
+
+        if (pendingToken) {
+          acceptInvitation(pendingToken);
+          console.log(pendingToken);
+          navigateTo(ROUTES.ORGANIZATIONS_LIST);
+        } else {
+          navigateTo(ROUTES.HOME);
+        } 
+      },
+    });
   };
 
-  const { mutate: forgotPassword, isForgotPasswordPending } =
+  const { mutate: forgotPassword, isPending: isForgotPasswordPending } =
     useForgotPassword();
 
   const handleForgotPassword = () => {
@@ -97,11 +137,22 @@ export default function Login() {
               label="Adresse e-mail"
               type="email"
               placeholder="vous@email.com"
-              isRequired={true}
               icon={Mail}
               {...register("email", { required: "L'email est requis" })}
               error={errors.email?.message}
+              disabled={isEmailLocked}
+              className={
+                isEmailLocked
+                  ? "bg-gray-100 text-gray-500 cursor-not-allowed dark:bg-gray-800"
+                  : ""
+              }
             />
+            {isEmailLocked && (
+              <p className="-mt-3 text-[11px] text-amber-600 dark:text-amber-400 font-medium">
+                Email verrouillé suite à votre invitation.
+              </p>
+            )}
+
             <PasswordInput
               name="password_confirmation"
               label="Mot de passe"
@@ -187,7 +238,6 @@ export default function Login() {
             </div>
           </div>
 
-          {/* Utilisation du composant Button en mode "secondary" */}
           <Button
             type="button"
             variant="secondary"
@@ -224,12 +274,12 @@ export default function Login() {
           />
 
           <p className="mt-8 text-center text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-            Pas encore de compte ? 
+            Pas encore de compte ?
             <Link
               to={ROUTES.REGISTER}
               className="ml-1 text-[var(--primary)] font-semibold hover:underline"
             >
-               Créer un compte
+              Créer un compte
             </Link>
           </p>
         </div>
