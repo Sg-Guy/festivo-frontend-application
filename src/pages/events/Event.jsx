@@ -42,17 +42,17 @@ export default function Events() {
     date,
     city,
   });
-  const { data: categories, isLoading: isLoadingCategories } = useCategories();
+  const { data: categoryOptions, isLoading: isLoadingCategories } = useCategories();
 
   const categoryTabs = [
     { id: "", label: "Tous", icon: Sparkles },
-    ...(categories?.map((cat) => ({
-      id: cat.id, // 1, 2, 3
-      label: cat.title,
+    ...(categoryOptions?.map((cat) => ({
+      id: cat.value, // 1, 2, 3
+      label: cat.label,
       icon:
-        cat.title === "concert"
+        cat.value === "concert"
           ? "🎵"
-          : cat.title === "gastronomie"
+          : cat.value === "gastronomie"
             ? "🍽️"
             : "🎉",
     })) || []),

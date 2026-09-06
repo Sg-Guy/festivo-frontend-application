@@ -14,11 +14,11 @@ import {
 } from "lucide-react";
 import { useOrgDetails } from "../../hooks/useOrg";
 import Spinner from "../../Components/ui/Spinner";
-import { ROLES } from "../../constants/roles";
+import { INVITATION_ROLES, ROLES } from "../../constants/roles";
 import Button from "../../Components/ui/Button";
 import Modal from "../../Components/ui/Modal";
 import Input from "../../Components/ui/Input";
-import Select from "../../Components/ui/Select"; // <-- Ton nouveau composant select
+import Select from "../../Components/ui/Select"; 
 import {
   useDeleteInvitation,
   useInviteMember,
@@ -26,11 +26,7 @@ import {
 } from "../../hooks/useMembers";
 
 // Options pour le select des rôles
-const roleOptions = [
-  { value: "controller", label: "Contrôleur" },
-  { value: "manager", label: "Manager" },
-  { value: "admin", label: "Administrateur" },
-];
+const roleOptions = INVITATION_ROLES;
 
 export default function OrganizationDetails() {
   const { id } = useParams();
@@ -85,7 +81,7 @@ export default function OrganizationDetails() {
 
   if (isDetailLoading) {
     return (
-      <div className="flex flex-row justify-center align-items-center text-center py-10">
+      <div className="flex flex-row justify-center align-items-center py-10">
         <Spinner size={18} className="text-center" />
         <p className="text-center">Chargement en cours...</p>
       </div>
@@ -103,6 +99,12 @@ export default function OrganizationDetails() {
         >
           <ArrowLeft size={16} />
           <span>Retour aux organisations</span>
+        </Link>
+        <Link
+          to={`/organizations/${organization.id}/events/create`}
+          className="ml-0 inline-flex items-center space-x-2 text-sm font-medium text-gray-500 hover:text-gray-900 dark:hover:text-white transition mb-6"
+        >
+          <span>Créer un évenement</span>
         </Link>
       </div>
 
@@ -315,53 +317,6 @@ export default function OrganizationDetails() {
             )}
           </div>
         </div>
-
-      <Modal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title="Inviter un membre"
-      >
-        <div className="flex flex-col gap-4">
-          <Input
-            label="Adresse email"
-            type="email"
-            icon={Mail}
-            placeholder="membre@gmail.com"
-            value={invitationEmail}
-            onChange={(e) => setInvitationEmail(e.target.value)}
-            error={invitationError}
-          />
-
-          {/* Intégration du composant Select pour le rôle */}
-          <Select
-            label="Rôle dans l'organisation"
-            icon={Shield}
-            options={roleOptions}
-            value={invitationRole}
-            onChange={(e) => setInvitationRole(e.target.value)}
-          />
-
-          <div className="flex justify-between gap-3 pt-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setIsModalOpen(false)}
-            >
-              Annuler
-            </Button>
-
-            <Button
-              type="button"
-              variant="primary"
-              isLoading={isPending}
-              loadingText="En cours..."
-              onClick={handleSendInvitation}
-            >
-              Envoyer l'invitation
-            </Button>
-          </div>
-        </div>
-      </Modal>
     </div>
   );
 }

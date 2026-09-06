@@ -15,10 +15,10 @@ const Select = forwardRef(
     ref
   ) => {
     return (
-      <div className={`space-y-1.5 w-full ${className}`}>
+      <div className={`sp w-full ${className}`}>
         {/* Label optionnel */}
         {label && (
-          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             {label}
           </label>
         )}
@@ -31,9 +31,9 @@ const Select = forwardRef(
             </div>
           )}
 
-          <select
+          <select    
             ref={ref}
-            className={`w-full rounded-2xl border bg-gray-50/50 dark:bg-[var(--dark-surface)] px-4 py-3 text-sm text-gray-900 dark:text-[var(--dark-text)] appearance-none focus:outline-none focus:ring-2 transition ${
+            className={`w-full py-2 rounded-xl bg-gray-50 dark:bg-[var(--dark-surface-soft)] border text-gray-900 dark:text-[var(--dark-text)] appearance-none  focus:ring-2 transition ${
               Icon ? "pl-10" : "pl-4"
             } pr-10 ${
               error

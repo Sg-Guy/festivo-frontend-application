@@ -5,6 +5,8 @@ import SidebarItem from "./SidebarItem";
 import { NAVIGATION_CONFIG } from "../../config/navigationConfig";
 import { useLogout } from "../../hooks/useAuth";
 import { ROUTES } from "../../constants/routes";
+import { ROLES } from "../../constants/roles";
+import OrganizationSwitcher from "../ui/OrganizationSwitcher";
 
 export default function Sidebar({ isOpen, onClose, user }) {
   const { mutate: logout, isPending } = useLogout();
@@ -55,11 +57,23 @@ export default function Sidebar({ isOpen, onClose, user }) {
           </button>
         </div>
 
+        {/* SÉLECTEUR D'ORGANISATION (Placé ici, hors de la zone scrollable pour éviter toute coupure du menu) */}
+        {user && userRole === "ORGANIZER" && (
+          <div className="px-4 pt-4 pb-2 border-b border-gray-100 dark:border-[var(--dark-border)]">
+            <p className="px-1 text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">
+              Espace {userRole}
+            </p>
+            <OrganizationSwitcher />
+          </div>
+        )}
+
         {/* Corps de navigation dynamique selon le rôle */}
         <div className="flex-1 overflow-y-auto px-4 py-6 space-y-1">
-          <p className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-            {user ? `Espace ${userRole}` : "Menu principal"}
-          </p>
+          {!user && (
+            <p className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+              Menu principal
+            </p>
+          )}
 
           {menuItems.map((item, index) => (
             <SidebarItem
@@ -67,9 +81,7 @@ export default function Sidebar({ isOpen, onClose, user }) {
               icon={item.icon}
               title={item.title}
               to={item.to}
-              onClick={() => {
-                null;
-              }}
+              onClick={onClose}
             />
           ))}
         </div>
@@ -96,7 +108,7 @@ export default function Sidebar({ isOpen, onClose, user }) {
             <div className="space-y-3">
               {/* Infos rapides utilisateur */}
               <div className="flex items-center space-x-3 px-2 py-1">
-                <div className="w-10 h-10 rounded-2xl bg-orange-100 dark:bg-orange-950 flex items-center justify-center text-[var(--primary)] font-bold text-sm overflow-hidden">
+                <div className="w-10 h-10 rounded-2xl bg-orange-100 dark:bg-orange-950 flex items-center justify-center text-[var(--primary)] font-bold text-sm overflow-hidden shrink-0">
                   {user.avatar ? (
                     <img
                       src={user.avatar}
@@ -125,7 +137,7 @@ export default function Sidebar({ isOpen, onClose, user }) {
                 variant="danger"
                 onClick={() => {
                   logout();
-                  onClose ;
+                  //onClose(); // Correction ici : appel de la fonction
                 }}
               />
             </div>

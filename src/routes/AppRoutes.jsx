@@ -20,6 +20,11 @@ import AcceptInvitation from "../pages/invitations/AcceptInvitation";
 import Footer from "../Components/layout/Footer";
 import { ErrorBoundary } from "react-error-boundary";
 import AppErrorFallback from "../Components/errors/AppErrorFallback";
+import CreateEvent from "../pages/organizer/Events/CreateEvent";
+import OrganizerEventsList from "../pages/organizer/Events/OrganizerEventList";
+import OrganizerEventDetails from "../pages/organizer/Events/OrganizerEventDetails";
+import { OrganizerRoute } from "./OrganizerRoutes";
+import MembersPage from "../pages/organizer/Members/MembersPage";
 
 export default function AppRoutes() {
   return (
@@ -35,30 +40,41 @@ export default function AppRoutes() {
         {/* Routes publiques avec le Layout global (NavBar + Footer) */}
         <Route element={<TopBar />}>
           <Route path={ROUTES.HOME} element={<LandingPage />} />
+
           <Route path={ROUTES.EVENTS} element={<Events />} />
+
           <Route path={ROUTES.EVENT_DETAILS} element={<EventDetails />} />
+
           <Route path={ROUTES.PROFILE} element={<Profile />} />
-          <Route
-            path={ROUTES.CREATE_ORGANIZATION}
-            element={<CreateOrganization />}
-          />
-          <Route
-            path={ROUTES.ORGANIZATIONS_LIST}
-            element={<OrganizationList />}
-          />
-          <Route
-            path={ROUTES.ORGANIZATIONS_DETAILS}
-            element={<OrganizationDetails />}
-          />
-        </Route>
-        <Route element={<Footer />} />
+
+          <Route path={ROUTES.CREATE_ORGANIZATION} element={<CreateOrganization />}/>
+
+          <Route path={ROUTES.ORGANIZATIONS_LIST} element={<OrganizationList />} />
+
+          <Route path={ROUTES.ORGANIZATIONS_DETAILS} element={<OrganizationDetails />} />
+
+          <Route path={ROUTES.CREATE_EVENT} element={<OrganizerRoute> <CreateEvent /> </OrganizerRoute>} />
+
+          <Route path={ROUTES.ORGANIZER_EVENTS} element={<OrganizerRoute> <OrganizerEventsList /> </OrganizerRoute>} />
+
+          <Route path={ROUTES.ORGANIZATION_MEMBERS} element={<OrganizerRoute> <MembersPage /> </OrganizerRoute>} />
+
+          <Route path={ROUTES.ORGANIZER_EVENT_DETAILS} element={<OrganizerEventDetails />} />
+      </Route>
+
+      <Route element={<Footer />} />
 
         {/* Routes sans la NavBar globale */}
         <Route element={<GuestRoute />}>
+
           <Route path={ROUTES.LOGIN} element={<Login />} />
+
           <Route path="/auth/login?invitation=true" element={<Login />} />
+
           <Route path={ROUTES.REGISTER} element={<Register />} />
+
           <Route path={ROUTES.RESET_PASSWORD} element={<ResetPassword />} />
+          
         </Route>
 
         <Route path={ROUTES.ACCEPT_INVITATION} element={<AcceptInvitation />} />

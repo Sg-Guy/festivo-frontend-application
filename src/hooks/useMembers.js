@@ -1,12 +1,15 @@
 import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import api from "../api/axios";
+import { useOrganizationStore } from "../store/useOrganizationStore";
 
 export function useInviteMember(orgId) {
+    const {activeOrganization} = useOrganizationStore();
+
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async (credentials) => {
-            const { data } = await api.post(`invitations/organization/${orgId}/send`, {
+            const { data } = await api.post(`invitations/organization/${activeOrganization?.id}/send`, {
                 email: credentials.email,
                 role: credentials.role, 
             });
@@ -86,5 +89,25 @@ export const useGetInvitation = () => {
         },
         //enabled: !!invitationToken 
     })
+}
+
+
+export function useOrganizationMembers(page = 1) {
+  const { activeOrganization } = useOrganizationStore();
+
+  return useQuery({
+    // La queryKey inclut l'ID de l'orga et la page. 
+    // Dès que l'orga change, React Query relance automatiquement la requête !
+    queryKey: ["organization-members", activeOrganization?.id, page],
+    queryFn: async () => {
+      if (!activeOrganization?.id) return null;
+      
+      const { data } = await api.get(`/members/organizations/${activeOrganization.id}`, {
+        params: { page }
+      });
+      return data; // Renvoie l'objet complet { data, links, meta }
+    },
+    enabled: !!activeOrganization?.id, // Ne lance la requête que si une organisation est active
+  });
 }
 

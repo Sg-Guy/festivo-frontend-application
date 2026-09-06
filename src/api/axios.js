@@ -1,6 +1,7 @@
 import axios from "axios";
 import { navigateTo } from "../utils/navigation";
 import { ROUTES } from "../constants/routes";
+import { useLogout } from "../hooks/useAuth";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const api = axios.create({

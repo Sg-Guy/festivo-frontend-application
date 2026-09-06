@@ -48,6 +48,7 @@ export const useCreateOrg = () => {
         },
         onSuccess: (data) => {
             toast.success(data.message || "Organisation créée avec succès !");
+            window.dispatchEvent(new Event("auth-storage"));
             navigateTo(ROUTES.ORGANIZATIONS_LIST);
         },
         onError: (error) => {

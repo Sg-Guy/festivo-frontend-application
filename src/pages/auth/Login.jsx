@@ -43,10 +43,9 @@ export default function Login() {
 
   const { mutate: acceptInvitation } = useAcceptInvitation();
 
-  const [isEmailLocked, setIsEmailLocked] = useState(false); 
+  const [isEmailLocked, setIsEmailLocked] = useState(false);
 
   useEffect(() => {
-    
     const pendingToken = localStorage.getItem("pending_invitation_token");
 
     if (pendingToken) {
@@ -57,7 +56,6 @@ export default function Login() {
           // Injecte l'email dans React Hook Form et verrouille le champ
           setValue("email", invitedEmail);
           setIsEmailLocked(true);
-          
         })
         .catch(() => {
           // token invalide ou expiré
@@ -69,16 +67,15 @@ export default function Login() {
   const onSubmit = (data) => {
     loginUser(data, {
       onSuccess: () => {
-        
         const pendingToken = localStorage.getItem("pending_invitation_token");
 
         if (pendingToken) {
           acceptInvitation(pendingToken);
-          console.log(pendingToken);
+          //console.log(pendingToken);
           navigateTo(ROUTES.ORGANIZATIONS_LIST);
         } else {
           navigateTo(ROUTES.HOME);
-        } 
+        }
       },
     });
   };

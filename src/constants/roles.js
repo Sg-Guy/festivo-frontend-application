@@ -2,5 +2,13 @@ export const ROLES = {
     admin: "Administrateur",
     organizer: "Organisateur",
     owner: "Propriétaire",
-    controller: "Contrôleur",
 }
+
+export const INVITATION_ROLES = [
+    {
+        value: "controller", label: "Contrôleur"
+    },
+    {
+        value: "seller", label: "Vendeur"
+    },
+]

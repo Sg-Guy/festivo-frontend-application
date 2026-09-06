@@ -15,8 +15,10 @@
     "@vimeo/player": "^2.30.4",
     "axios": "^1.17.0",
     "date-fns": "^4.4.0",
+    "fabric": "^7.4.0",
     "html5-qrcode": "^2.3.8",
     "lucide-react": "^1.21.0",
+    "motion": "^13.1.1",
     "qrcode": "^1.5.4",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
@@ -24,7 +26,8 @@
     "react-hook-form": "^7.79.0",
     "react-hot-toast": "^2.6.0",
     "react-router-dom": "^7.18.0",
-    "recharts": "^3.8.1"
+    "recharts": "^3.8.1",
+    "zustand": "^5.0.15"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

@@ -20,7 +20,7 @@ export function useLogin() {
                 localStorage.setItem("user", JSON.stringify(data.data));
                 window.dispatchEvent(new Event("auth-storage"));
             };
-            
+
             navigateTo(ROUTES.EVENTS);
         },
         onError: (error) => {
@@ -111,6 +111,7 @@ export function useLogout() {
         onSuccess: (data) => {
             localStorage.removeItem("token");
             localStorage.removeItem("user");
+            //localStorage.clear();
             window.dispatchEvent(new Event("auth-change")); // Met à jour l'interface instantanément            t
             toast.success(data.message || "Déconnecté");
             navigateTo(ROUTES.HOME);
@@ -118,7 +119,7 @@ export function useLogout() {
         onError: (error) => {
             localStorage.removeItem("token");
             localStorage.removeItem("user");
-            window.dispatchEvent(new Event("auth-change")); 
+            window.dispatchEvent(new Event("auth-change"));
             navigateTo(ROUTES.HOME)
         }
     })
@@ -135,14 +136,20 @@ export function useProfile() {
     })
 }
 
-export function useUpdate() {
+export function useUpdateProfile() {
     return useMutation({
         mutationFn: async (credentials) => {
-            const data = await api.put("/me", credentials);
+            const {data} = await api.put("/me", {
+                firstname: credentials.firstname,
+                lastname: credentials.lastname,
+                phone: credentials.phone,
+                email: credentials.email,
+                password: credentials.password,
+            });
             return data;
         },
         onSuccess: (data) => {
-            toast.success(data.message || "Profil mis à jour avec ");
+            toast.success(data.message || "Profil mis à jour avec succès. ");
         },
         onError: (error) => {
             const messsage = error?.response?.data?.message || "Erreur lors de de la mise jour du profil."

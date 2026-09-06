@@ -26,7 +26,7 @@ export default function CreateOrganization() {
 
   const { mutate: createOrganization, isPending } = useCreateOrg();
   // État du formulaire
- /* const [formData, setFormData] = useState({
+  /* const [formData, setFormData] = useState({
     name: "",
     description: "",
     organization_phone: "",
@@ -34,9 +34,11 @@ export default function CreateOrganization() {
     logo: null, // Pour un fichier image ou une URL selon ton API
   });*/
 
-
   const handleCreateOrg = async (formData) => {
     createOrganization(formData, {
+      onSuccess: (data) => {
+        
+      },
       onError: (error) => {
         const validationErrors = error.response?.data?.errors;
 
@@ -165,16 +167,12 @@ export default function CreateOrganization() {
               <label className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 dark:border-[var(--dark-border)] rounded-2xl p-6 cursor-pointer hover:border-[var(--primary)] dark:hover:border-[var(--primary)] transition bg-gray-50/50 dark:bg-[var(--dark-surface)] group">
                 <Image className="w-8 h-8 text-gray-400 group-hover:text-[var(--primary)] transition mb-2" />
                 <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
-                    "Cliquez pour importer un logo"
+                  "Cliquez pour importer un logo"
                 </span>
                 <span className="text-xs text-gray-400 mt-1">
                   PNG, JPG, WEBP (Max. 2Mo)
                 </span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                />
+                <input type="file" accept="image/*" className="hidden" />
               </label>
             </div>
           </div>
