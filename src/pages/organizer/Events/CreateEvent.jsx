@@ -131,7 +131,6 @@ export default function CreateEvent() {
       } else if (step === 2) {
         if (data.images && data.images.length > 0) {
           if (!hasDataChanged(step, data.images)) return true;
-          console.log(data.image);
           createGallery(data, {
             onSuccess: (response) => {
               const savedImages = response.data || [];
@@ -158,7 +157,7 @@ export default function CreateEvent() {
 
         createTickets(data, {
           onSuccess: (response) => {
-            methods.setValue("ticket_categories", response.data.tickets);
+            setValue("ticket_categories", response.data);
           },
         });
         lastSavedDataRef.current[step] = JSON.parse(
