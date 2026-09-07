@@ -11,13 +11,14 @@ export function useCreateEventGallery(eventId) {
             // credentials.images attend ton tableau : [{ image: File, caption: "..." }]
             if (credentials && credentials.images) {
                 credentials.images.forEach((item, index) => {
-                    if (item.image && item.image[0]) {
+                    /*if (item.image && item.image[0]) {
                         // Si l'input file renvoie un FileList, on prend le premier fichier
                         formData.append(`images[${index}][image]`, item.image[0]);
                     } else if (item.image instanceof File) {
                         // Si c'est déjà un objet File direct
-                        formData.append(`images[${index}][image]`, item.image);
-                    }
+                    }*/
+                    item.id && formData.append(`images[${index}][id]`, item.id);
+                    formData.append(`images[${index}][image]`, item.image);
                     formData.append(`images[${index}][caption]`, item.caption || "");
                 });
             }

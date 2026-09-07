@@ -6,4 +6,4 @@ export function useUserRole() {
   const isAdmin = user?.roles?.some(role => role.name === 'admin');
 
   return { user, isOrganizer, isAdmin, isAuthenticated: !!user };
-}j
+}

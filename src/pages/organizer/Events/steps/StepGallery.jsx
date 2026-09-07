@@ -6,7 +6,7 @@ import Input from "../../../../Components/ui/Input";
 
 export default function StepGallery() {
   const { control, register, watch } = useFormContext();
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, update } = useFieldArray({
     control,
     name: "images",
   });
@@ -14,20 +14,49 @@ export default function StepGallery() {
   const watchedImages = watch("images") || [];
   const maxImagesReached = fields.length >= 5;
 
+  //Fonction de selection
+  const handleImageChange = (index, file) => {
+    if (!file) return;
+
+    const currentImage = watchedImages[index];
+
+    // Libérer l'ancienne URL si l'utilisateur remplace l'image
+    if (currentImage?.preview) {
+      URL.revokeObjectURL(currentImage.preview);
+    }
+
+    const preview = URL.createObjectURL(file);
+
+    update(index, {
+      ...currentImage,
+      image: file,
+      preview,
+    });
+  };
+
   return (
     <div className="bg-white dark:bg-[var(--dark-surface)] p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Galerie Photos & Souvenirs</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+            Galerie Photos & Souvenirs
+          </h2>
           <p className="text-xs text-gray-500">
-            Ajoutez jusqu'à 5 photos pour enrichir la page de votre événement ({fields.length}/5).
+            Ajoutez jusqu'à 5 photos pour enrichir la page de votre événement (
+            {fields.length}/5).
           </p>
         </div>
-        
+
         {/* On masque ou désactive le bouton si on a atteint la limite de 5 images */}
         {!maxImagesReached && (
           <div className="w-full sm:w-auto">
-            <Button type="button" variant="primary" onClick={() => append({ image: null, caption: "" })}>
+            <Button
+              type="button"
+              variant="primary"
+              onClick={() =>
+                append({ image: null, caption: "", preview: null })
+              }
+            >
               <ImagePlus size={16} />
               <span>Ajouter une photo</span>
             </Button>
@@ -37,42 +66,99 @@ export default function StepGallery() {
 
       {maxImagesReached && (
         <div className="p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-xl text-xs text-amber-800 dark:text-amber-400 font-medium">
-          ⚠️ Vous avez atteint la limite maximale de 5 images pour cet événement.
+          ⚠️ Vous avez atteint la limite maximale de 5 images pour cet
+          événement.
         </div>
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {fields.map((field, index) => {
-          const currentFile = watchedImages[index]?.image;
-          const fileName = currentFile && currentFile[0] ? currentFile[0].name : null;
+          const currentImage = watchedImages[index];
+          const currentFile = currentImage?.image;
+          const fileName = currentFile?.name;
+          const preview = currentImage?.preview;
 
           return (
-            <div key={field.id} className="p-5 border border-gray-200 dark:border-gray-800 rounded-2xl space-y-4 relative bg-gray-50/50 dark:bg-gray-900/30">
-              <button type="button" onClick={() => remove(index)} className="absolute top-4 right-4 text-red-500 hover:text-red-700 p-1 rounded-lg">
+            <div
+              key={field.id}
+              className="p-5 border border-gray-200 dark:border-gray-800 rounded-2xl space-y-4 relative bg-gray-50/50 dark:bg-gray-900/30"
+            >
+              <button
+                type="button"
+                onClick={() => {
+                  const preview = watchedImages[index]?.preview;
+
+                  // Lors de la suppression ou du remplacement :
+                  if (preview && preview.startsWith("blob:")) {
+                    URL.revokeObjectURL(preview);
+                  }
+
+                  remove(index);
+                }}
+                className="absolute top-4 right-4 text-red-500 hover:text-red-700 p-1 rounded-lg"
+              >
                 <Trash2 size={18} />
               </button>
-              
+
               <div>
                 <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   Photo #{index + 1} *
                 </label>
-                <label className={`border-2 border-dashed rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer transition ${fileName ? "border-green-500 bg-green-50/30 dark:bg-green-950/20" : "border-gray-300 dark:border-gray-700 hover:border-[var(--primary)] bg-white dark:bg-[var(--dark-surface-soft)]"}`}>
-                  {fileName ? (
-                    <>
-                      <CheckCircle2 className="text-green-600 mb-1" size={24} />
-                      <span className="text-xs font-bold text-green-700 dark:text-green-400 text-center truncate max-w-full">
-                        {fileName}
-                      </span>
-                      <span className="text-[10px] text-gray-400 mt-0.5">Cliquez pour modifier</span>
-                    </>
+                <label
+                  className={`border-2 border-dashed rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer transition ${fileName ? "border-green-500 bg-green-50/30 dark:bg-green-950/20" : "border-gray-300 dark:border-gray-700 hover:border-[var(--primary)] bg-white dark:bg-[var(--dark-surface-soft)]"}`}
+                >
+                  {preview ? (
+                    <div className="relative w-full h-48 rounded-lg overflow-hidden bg-gray-900 group shadow-inner">
+                      <img
+                        src={preview}
+                        alt={fileName || "Aperçu"}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+
+                      {/* Petit overlay sombre au survol pour rendre le texte plus lisible si besoin */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80" />
+
+                      {/* Infos du fichier incrustées proprement en bas de l'image */}
+                      <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10">
+                        <div className="flex items-center gap-2 truncate">
+                          <CheckCircle2
+                            className="text-green-400 shrink-0"
+                            size={16}
+                          />
+                          <span className="text-xs font-medium text-white truncate">
+                            {fileName}
+                          </span>
+                        </div>
+                        <span className="text-[10px] text-gray-300 shrink-0 uppercase tracking-wider font-semibold">
+                          Modifier
+                        </span>
+                      </div>
+                    </div>
                   ) : (
                     <>
                       <UploadCloud className="text-gray-400 mb-1" size={24} />
-                      <span className="text-xs font-medium text-gray-600 dark:text-gray-300">Cliquez pour sélectionner une image</span>
-                      <span className="text-[10px] text-gray-400 mt-0.5">PNG, JPG, WEBP (Max 5Mo)</span>
+
+                      <span className="text-xs font-medium text-gray-600 dark:text-gray-300">
+                        Cliquez pour sélectionner une image
+                      </span>
+
+                      <span className="text-[10px] text-gray-400 mt-0.5">
+                        PNG, JPG, WEBP (Max 5Mo)
+                      </span>
                     </>
                   )}
-                  <input type="file" accept="image/*" {...register(`images.${index}.image`)} className="hidden" />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+
+                      if (file) {
+                        handleImageChange(index, file);
+                      }
+                    }}
+                  />
                 </label>
               </div>
 
@@ -88,8 +174,12 @@ export default function StepGallery() {
         {fields.length === 0 && (
           <div className="col-span-2 text-center py-12 border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-2xl space-y-2">
             <UploadCloud className="mx-auto text-gray-300" size={32} />
-            <p className="text-sm font-medium text-gray-500">Aucune photo dans la galerie pour le moment.</p>
-            <p className="text-xs text-gray-400">Vous pouvez ajouter jusqu'à 5 photos.</p>
+            <p className="text-sm font-medium text-gray-500">
+              Aucune photo dans la galerie pour le moment.
+            </p>
+            <p className="text-xs text-gray-400">
+              Vous pouvez ajouter jusqu'à 5 photos.
+            </p>
           </div>
         )}
       </div>

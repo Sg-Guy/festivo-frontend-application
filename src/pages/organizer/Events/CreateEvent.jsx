@@ -18,6 +18,7 @@ import { useCreateEventGallery } from "../../../hooks/useEvenetGallery";
 import toast from "react-hot-toast";
 import { navigateTo } from "../../../utils/navigation";
 import { ROUTES } from "../../../constants/routes";
+import { PictureBaseUrl } from "../../../constants/picturesBaseUrl";
 
 export default function CreateEvent() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -130,15 +131,34 @@ export default function CreateEvent() {
       } else if (step === 2) {
         if (data.images && data.images.length > 0) {
           if (!hasDataChanged(step, data.images)) return true;
-          await createGallery(data);
+          console.log(data.image);
+          createGallery(data, {
+            onSuccess: (response) => {
+              const savedImages = response.data || [];
+
+            // On transforme chaque image de la DB pour qu'elle corresponde à ce que StepGallery attend
+            const formattedImages = savedImages.map((item) => ({
+              id: item.id, // ID en base de données
+              image: null, // Pas de fichier File puisque c'est déjà stocké
+              caption: item.caption || "", // La légende
+              preview: item.path // L'URL publique pour l'affichage de l'aperçu
+                ? `${PictureBaseUrl.EVENTS}/${item.path}`
+                : null,
+              isExisting: true, // Un petit flag pour dire "c'est déjà sur le serveur"
+            }));
+
+            // On met à jour le formulaire avec la structure propre
+            setValue("images", formattedImages);
+            },
+          });
           lastSavedDataRef.current[step] = [...data.images];
         }
       } else if (step === 3) {
         if (!hasDataChanged(step, data.ticket_categories)) return true;
 
         createTickets(data, {
-          onSuccess: (data) => {
-            setValue("ticket_categories", data.data);
+          onSuccess: (response) => {
+            methods.setValue("ticket_categories", response.data.tickets);
           },
         });
         lastSavedDataRef.current[step] = JSON.parse(
@@ -228,7 +248,7 @@ export default function CreateEvent() {
 
   // Étape finale : Publication définitive
   const handlePublish = async (data) => {
-      publishEvent();
+    publishEvent();
   };
 
   return (
