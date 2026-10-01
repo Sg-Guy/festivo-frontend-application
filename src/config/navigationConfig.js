@@ -2,7 +2,8 @@ import {
   Home, Compass, Tag, Calendar, 
   LayoutDashboard, Users, Ticket, Settings, 
   ShieldAlert, BarChart3, Wallet, 
-  Users2
+  Users2,
+  CodeIcon
 } from "lucide-react";
 import { ROUTES } from "../constants/routes";
 
@@ -29,7 +30,7 @@ export const NAVIGATION_CONFIG = {
     { title: "Mes Événements", icon: Calendar, to: "/organizer/events" },
     { title: "Equipes", icon: Users2, to: ROUTES.ORGANIZATION_MEMBERS },
     { title: "Ventes & Billetterie", icon: BarChart3, to: "/organizer/sales" },
-    { title: "Participants", icon: Users, to: "/organizer/attendees" },
+    { title: "Codes Promos", icon: CodeIcon, to: ROUTES.PROMO_CODES },
     { title: "Paramètres", icon: Settings, to: "/settings" },
   ],
 

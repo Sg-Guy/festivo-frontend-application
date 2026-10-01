@@ -157,10 +157,25 @@ export function usePublishEvent(eventId) {
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ["organizer-events"] });
             toast.success("Événement publié avec succès !");
-            navigateTo(ROUTES.ORGANIZER_EVENTS , {replace: true});
+            navigateTo(ROUTES.ORGANIZER_EVENTS, { replace: true });
         },
         onError: (error) => {
             toast.error(error?.response?.data?.message || "Erreur lors de la publication.");
         },
     });
 }
+
+
+export function useEventsForSelect() {
+    const { activeOrganization } = useOrganizationStore();
+    return useQuery({
+        queryKey: ["events-select-list", activeOrganization?.id,],
+        queryFn: async () => {
+            const { data } = await api.get(`/organizations/${activeOrganization.id}/events/for-select`);
+            return data; // Retourne [{ id, title, tickets: [{ id, name }] }]
+        },
+        staleTime: 1000 * 60 * 5, // Les données restent fraîches pendant 5 minutes (zéro requête inutile)
+        refetchOnWindowFocus: false,
+    });
+}
+

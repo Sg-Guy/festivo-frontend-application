@@ -4,12 +4,13 @@ import toast from "react-hot-toast";
 import api from "../api/axios";
 import { navigateTo } from "../utils/navigation";
 import { ROUTES } from "../constants/routes";
+import axios from "axios";
 
 // Hook pour la Connexion
 export function useLogin() {
     return useMutation({
         mutationFn: async (credentials) => {
-            //await api.get("/sanctum/csrf-cookie");
+            //await axios.get("/sanctum/csrf-cookie");
             const { data } = await api.post("/login", credentials);
             return data;
         },

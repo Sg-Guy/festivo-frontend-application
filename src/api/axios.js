@@ -6,7 +6,9 @@ import { useLogout } from "../hooks/useAuth";
 const API_URL = import.meta.env.VITE_API_URL;
 const api = axios.create({
     baseURL: API_URL,
-    withCredentials: true, // Indispensable pour Sanctum (cookies d'authentification)
+    //xsrfCookieName: "XSRF-TOKEN",
+    //xsrfHeaderName: "X-XSRF-TOKEN",
+    //withCredentials: true, // Indispensable pour Sanctum (cookies d'authentification)
     headers: {
         "Content-Type": "application/json",
         "Accept": "application/json",

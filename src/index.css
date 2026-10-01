@@ -113,3 +113,19 @@ select:focus-visible {
 .dark ::-webkit-scrollbar-thumb:hover {
     background: var(--primary);
 }
+
+@keyframes scanLaser {
+  0% {
+    transform: translateY(-110px);
+  }
+  50% {
+    transform: translateY(110px);
+  }
+  100% {
+    transform: translateY(-110px);
+  }
+}
+
+.animate-scan-laser {
+  animation: scanLaser 2.5s ease-in-out infinite;
+}

@@ -1,0 +1,9 @@
+localhost:5173 {
+    tls internal
+    reverse_proxy frontend:5174
+}
+
+10.129.30.15:5173 {
+    tls internal
+    reverse_proxy frontend:5174
+}

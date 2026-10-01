@@ -5,6 +5,7 @@ import {
 } from "../../../hooks/useMembers";
 import Modal from "../../../Components/ui/Modal";
 import Input from "../../../Components/ui/Input";
+import Button from "../../../Components/ui/Button";
 
 export default function MembersPage() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -28,7 +29,7 @@ export default function MembersPage() {
 
   if (isError) {
     return (
-      <div className="p-4 bg-rose-50 text-rose-600 rounded-2xl text-xs font-semibold">
+      <div className="p-4 bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 rounded-2xl text-xs font-semibold">
         Une erreur est survenue lors du chargement des membres.
       </div>
     );
@@ -47,20 +48,24 @@ export default function MembersPage() {
             {response.meta.total} membres
           </span>
           <div className="flex space-x-2">
-            <button
+            <Button
+              type="button"
+              variant="outline"
               disabled={currentPage === 1}
               onClick={() => setCurrentPage((prev) => prev - 1)}
-              className="px-3 py-1.5 rounded-lg border border-gray-200 dark:border-[var(--dark-border)] disabled:opacity-40 hover:bg-gray-50 transition"
+              className="w-auto px-3 py-1.5 rounded-lg"
             >
               Précédent
-            </button>
-            <button
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
               disabled={currentPage === response.meta.last_page}
               onClick={() => setCurrentPage((prev) => prev + 1)}
-              className="px-3 py-1.5 rounded-lg border border-gray-200 dark:border-[var(--dark-border)] disabled:opacity-40 hover:bg-gray-50 transition"
+              className="w-auto px-3 py-1.5 rounded-lg"
             >
               Suivant
-            </button>
+            </Button>
           </div>
         </div>
       )}

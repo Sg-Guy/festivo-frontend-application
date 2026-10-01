@@ -18,7 +18,21 @@ export const ROUTES = {
   CREATE_ORGANIZATION : "/organizations/create",
   ORGANIZATION_MEMBERS: "/organizations/members" ,
 
-  ACCEPT_INVITATION : "/accept-invitation"
+  ACCEPT_INVITATION : "/accept-invitation",
+
+
+  //Scan
+  SCAN_TICKET: "/events/:id/ticket-scans",
+
+  //Promo code
+  PROMO_CODES: "codes-promos",
+
+
+  //PANIER
+  BASKET_DETAILS: "/baskets/:basketId",
+
+  //PAYMENT
+  PAY_ORDER: "/orders/:orderId/payments"
   
 };
 

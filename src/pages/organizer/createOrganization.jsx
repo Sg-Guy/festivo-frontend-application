@@ -52,39 +52,6 @@ export default function CreateOrganization() {
         }
       },
     });
-
-    // Validation simple (seul le nom est obligatoire)
-    /* if (!formData.name.trim()) {
-      setError("Le nom de l'organisation est obligatoire.");
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      // TODO: Remplace ceci par ton appel API (ex: mutation TanStack Query ou Axios)
-      // Si tu envoie un fichier (logo), pense à utiliser FormData()
-      const dataToSend = new FormData();
-      Object.keys(formData).forEach((key) => {
-        if (formData[key] !== null && formData[key] !== "") {
-          dataToSend.append(key, formData[key]);
-        }
-      });
-
-      console.log("Envoi des données de l'organisation...", formData);
-
-      // Simulation d'un délai réseau
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Redirection après succès (ex: vers le dashboard ou la liste)
-      navigate("/dashboard");
-    } catch (err) {
-      setError(
-        "Une erreur est survenue lors de la création de l'organisation.",
-      );
-    } finally {
-      setLoading(false);
-    }*/
   };
 
   return (

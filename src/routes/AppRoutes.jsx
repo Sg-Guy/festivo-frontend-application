@@ -25,6 +25,10 @@ import OrganizerEventsList from "../pages/organizer/Events/OrganizerEventList";
 import OrganizerEventDetails from "../pages/organizer/Events/OrganizerEventDetails";
 import { OrganizerRoute } from "./OrganizerRoutes";
 import MembersPage from "../pages/organizer/Members/MembersPage";
+import TicketScanner from "../pages/controller/Scan";
+import PromoCodesPage from "../pages/organizer/PromoCodes/PromoCodes";
+import BasketSummary from "../pages/buyer/BasketSummary";
+import PaymentPage from "../pages/buyer/PaymentPage";
 
 export default function AppRoutes() {
   return (
@@ -60,6 +64,14 @@ export default function AppRoutes() {
           <Route path={ROUTES.ORGANIZATION_MEMBERS} element={<OrganizerRoute> <MembersPage /> </OrganizerRoute>} />
 
           <Route path={ROUTES.ORGANIZER_EVENT_DETAILS} element={<OrganizerEventDetails />} />
+
+          <Route path={ROUTES.SCAN_TICKET} element={<TicketScanner />} />
+
+          <Route path={ROUTES.PROMO_CODES} element={<PromoCodesPage />} />
+
+          <Route path={ROUTES.BASKET_DETAILS} element={<BasketSummary />} />
+
+          <Route path={ROUTES.PAY_ORDER} element={<PaymentPage />} />
       </Route>
 
       <Route element={<Footer />} />
